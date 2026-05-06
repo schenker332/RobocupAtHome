@@ -1,0 +1,5 @@
+<launch>
+    <node name="guest_stylist" pkg="guest_stylist" type="stylist_node.py" output="screen">
+        <param name="image_topic" value="/xtion/rgb/image_raw" />
+    </node>
+</launch>

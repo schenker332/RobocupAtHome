@@ -1,0 +1,8 @@
+# Goal
+int32 pose_id
+---
+# Result
+bool success
+---
+# Feedback
+string status

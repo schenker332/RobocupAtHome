@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  <!-- This runs the node executable that 'catkin build' created -->
+  <node name="plane_segmentation_node" 
+        pkg="plane_segmentation" 
+        type="plane_segmentation_node" 
+        output="screen">
+    
+    <param name="point_cloud_topic" value="/xtion/depth_registered/points" />
+    <param name="base_frame" value="base_footprint" />
+
+  </node>
+  
+</launch>

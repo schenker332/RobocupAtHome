@@ -1,0 +1,27 @@
+<launch>
+    <!-- 
+         Manual Localization Infrastructure
+         Provides: 
+         - Map Server (your perfect map)
+         - Robot State Publisher (for model)
+         - TF odom -> base_footprint (from broadcaster)
+         - TF base_footprint -> laser (static)
+    -->
+
+    <!-- 1. Map Server (Publishes on /map by default) -->
+    <arg name="map_file" default="/home/leoku/project_ws/src/robocupproject/maps/receptionist_office.yaml"/>
+    <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" output="screen"/>
+
+    <!-- 2. Robot State Publisher -->
+    <!-- This provides the transformations for the robot model in RViz -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+    <!-- 3. Odom TF Broadcaster -->
+    <node name="odom_tf_broadcaster" pkg="task_control" type="odom_tf_broadcaster.py" output="screen">
+        <param name="odom_topic" value="/mobile_base_controller/odom"/>
+    </node>
+
+    <!-- 4. Static Transform for Laser -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_to_laser" args="0 0 0 0 0 0 base_footprint base_laser_link" />
+
+</launch>

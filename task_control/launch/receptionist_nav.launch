@@ -1,0 +1,13 @@
+<launch>
+  <arg name="map_file" default="/home/leoku/project_ws/src/robocupproject/maps/receptionist_office.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
+  <include file="$(find tiago_2dnav)/launch/localization.launch">
+    <arg name="localization" value="amcl"/>
+    <arg name="base_type" value="pmb2"/>
+  </include>
+
+  <include file="$(find tiago_2dnav)/launch/move_base.launch">
+    <arg name="local_planner" value="teb"/> <arg name="public_sim" value="true"/>   <arg name="base_type" value="pmb2"/>
+  </include>
+</launch>

@@ -1,0 +1,9 @@
+# Goal - Which seat/pose to point at
+int32 pose_id
+---
+# Result
+bool success
+string message
+---
+# Feedback
+string current_state

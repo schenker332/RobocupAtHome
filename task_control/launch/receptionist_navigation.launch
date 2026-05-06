@@ -1,0 +1,41 @@
+<launch>
+  <!-- =======================================================
+       FINAL NAVIGATION LAUNCH
+       ======================================================= -->
+
+  <arg name="map_file" default="/home/leoku/project_ws/src/robocupproject/maps/receptionist_office.yaml"/>
+  <arg name="private_map_topic" value="/my_private_map"/>
+
+  <!-- 1. Map Server -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" output="screen">
+      <remap from="map" to="$(arg private_map_topic)"/>
+      <remap from="static_map" to="/my_private_static_map"/> 
+  </node>
+
+  <!-- 2. AMCL -->
+  <node name="amcl" pkg="amcl" type="amcl" output="screen" respawn="false">
+    <rosparam file="$(find task_control)/config/amcl_receptionist.yaml" command="load"/>
+    <remap from="map" to="$(arg private_map_topic)"/>
+    <remap from="static_map" to="/my_private_static_map"/>
+    <remap from="scan" to="/scan"/>
+  </node>
+
+  <!-- 3. Move Base -->
+  <include file="$(find tiago_2dnav)/launch/move_base.launch">
+    <arg name="local_planner" value="teb"/> 
+    <arg name="public_sim" value="true"/>   
+    <arg name="base_type" value="pmb2"/>
+    <!-- We let it publish to /nav_vel (default) -->
+  </include>
+
+  <!-- Global Costmap Override -->
+  <group ns="move_base/global_costmap/static_layer">
+    <param name="map_topic" value="$(arg private_map_topic)"/>
+  </group>
+  
+  <!-- TEB LOOSE CONFIG -->
+  <group ns="move_base">
+      <rosparam file="$(find task_control)/config/teb_loose.yaml" command="load"/>
+  </group>
+
+</launch>

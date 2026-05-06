@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>audio_detection</name>
+  <version>0.1.0</version>
+  <description>Audio detection package for doorbell and knock detection using dual AI models (YAMNet + Custom)</description>
+
+  <maintainer email="robocup@example.com">RoboCup Team</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  <depend>messages</depend>
+
+  <export>
+  </export>
+</package>

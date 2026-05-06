@@ -1,0 +1,6 @@
+TebLocalPlannerROS:
+  acc_lim_x: 0.3      # Etwas dynamischer (war 0.1)
+  acc_lim_theta: 0.5  # Etwas dynamischer (war 0.2)
+  max_vel_x: 0.6
+  max_vel_x_backwards: 0.2
+  max_vel_theta: 0.6

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  <param name="use_sim_time" value="false"/>
+
+
+  <!-- Parameters -->
+  <arg name="handle_centroid_topic" default="handle_synthetic_centroid"/>
+  <arg name="base_frame" default="base_footprint"/>
+  <arg name="pregrasp_distance" default="0.30 "/>
+  <arg name="approach_distance" default="0.02"/>
+
+  <!-- Open Door Node -->
+  <node name="open_door_node" 
+        pkg="open_door" 
+        type="open_door_node" 
+        output="screen">
+    
+    <param name="handle_centroid_topic" value="$(arg handle_centroid_topic)"/>
+    <param name="base_frame" value="$(arg base_frame)"/>
+    <param name="pregrasp_distance" value="$(arg pregrasp_distance)"/>
+    <param name="approach_distance" value="$(arg approach_distance)"/>
+    
+  </node>
+
+  <arg name="fake" default="false"/>
+  <arg name="arm"           default="True"/>
+  <arg name="end_effector"  default="pal-gripper"/>  <arg name="ft_sensor"     default="schunk-ft"/>
+  <arg name="laser_model"   default="sick-571"/>
+  <arg name="camera_model"  default="orbbec-astra"/>
+  <arg name="base_type"     default="pmb2"/>
+  <arg name="debug"     default="false"/>
+  
+
+  <include file="$(find tiago_moveit_config)/launch/move_group.launch">
+    <arg name="load_robot_description" value="true"/>
+    
+    <arg name="arm" value="$(arg arm)"/>
+    <arg name="end_effector" value="$(arg end_effector)"/>
+    <arg name="ft_sensor" value="$(arg ft_sensor)"/>
+    <arg name="laser_model" value="$(arg laser_model)"/>
+    <arg name="camera_model" value="$(arg camera_model)"/>
+    <arg name="base_type" value="$(arg base_type)"/>
+
+    <arg name="allow_trajectory_execution" value="true"/>
+    <arg name="fake_execution" value="false"/>
+    
+    <arg name="info" value="true"/>
+    <arg name="debug" value="$(arg debug)"/>
+  </include>
+
+</launch>

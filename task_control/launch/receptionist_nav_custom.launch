@@ -1,0 +1,95 @@
+<launch>
+  <!-- =========================
+       Args
+       ========================= -->
+  <arg name="map_file" default="/home/leoku/project_ws/src/robocupproject/maps/receptionist_office.yaml"/>
+
+  <!-- =========================
+       1) Map Server  (publish -> /static_map)
+       ========================= -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" output="screen">
+    <!-- publish our map on /static_map, so PAL /map publisher can't break us -->
+    <remap from="map" to="static_map"/>
+  </node>
+
+  <!-- Optional sanity: also expose /map_metadata under static name (not required) -->
+  <!-- map_server also publishes /map_metadata; we remap for consistency -->
+  <remap from="/map_metadata" to="/static_map_metadata"/>
+
+  <!-- =========================
+       2) AMCL (subscribes map from /static_map)
+       ========================= -->
+  <node name="amcl" pkg="amcl" type="amcl" output="screen" respawn="false">
+    <rosparam file="$(find task_control)/config/amcl_receptionist.yaml" command="load"/>
+
+    <!-- scan input -->
+    <remap from="scan" to="/scan"/>
+
+    <!-- map input -->
+    <remap from="map" to="static_map"/>
+  </node>
+
+    <!-- Bridge Odometry topic -> TF (odom -> base_footprint) -->
+  <node name="odom_tf_broadcaster" pkg="task_control" type="odom_tf_broadcaster.py" output="screen">
+    <param name="odom_topic" value="/mobile_base_controller/odom"/>
+  </node>
+
+
+  <!-- =========================
+       3) Auto Localizer (your Python state machine)
+       ========================= -->
+  <node name="auto_localizer" pkg="task_control" type="auto_localizer.py" output="screen">
+    <!-- velocity command: publish into twist_mux so joystick keeps priority -->
+    <param name="cmd_vel_topic" value="/nav_vel"/>
+
+    <!-- spin strategy -->
+    <param name="spin_speed" value="0.45"/>
+    <param name="spin_step_sec" value="0.8"/>
+    <param name="max_total_sec" value="80.0"/>
+
+    <!-- convergence thresholds -->
+    <param name="th_var_x" value="0.05"/>
+    <param name="th_var_y" value="0.05"/>
+    <param name="th_var_yaw" value="0.10"/>
+    <param name="required_stable" value="8"/>
+
+    <!-- safety -->
+    <param name="enable_safety_stop" value="true"/>
+    <param name="min_obstacle_dist" value="0.35"/>
+
+    <!-- tf timing debug -->
+    <param name="tf_future_tolerance" value="0.40"/>
+
+    <!-- explicitly set services (even if defaults match, this avoids surprises) -->
+    <param name="global_localization_srv" value="/global_localization"/>
+    <param name="request_nomotion_update_srv" value="/request_nomotion_update"/>
+  </node>
+  <rosparam>
+  move_base:
+    global_costmap:
+      obstacle_laser_layer:
+        base_scan:
+          topic: /scan
+    local_costmap:
+      obstacle_laser_layer:
+        base_scan:
+          topic: /scan
+  </rosparam>
+
+  <!-- =========================
+       4) move_base (force static_layer to use /static_map)
+       ========================= -->
+  <include file="$(find tiago_2dnav)/launch/move_base.launch">
+    <arg name="local_planner" value="teb"/>
+    <arg name="public_sim" value="true"/>
+    <arg name="base_type" value="pmb2"/>
+  </include>
+
+  <!-- After move_base.launch loads its params, override the static layer map topic -->
+  <!-- Global costmap definitely uses static_layer -->
+  <rosparam param="/move_base/global_costmap/static_layer/map_topic">static_map</rosparam>
+
+  <!-- Some configs also have static_layer in local_costmap; harmless if unused -->
+  <rosparam param="/move_base/local_costmap/static_layer/map_topic">static_map</rosparam>
+
+</launch>

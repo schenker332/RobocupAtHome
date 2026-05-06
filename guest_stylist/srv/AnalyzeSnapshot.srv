@@ -1,0 +1,6 @@
+# Request
+# Optional: Image to analyze. If empty, node uses latest camera image.
+sensor_msgs/Image image 
+---
+# Response: Description of the person (gender, age, clothing...)
+string description

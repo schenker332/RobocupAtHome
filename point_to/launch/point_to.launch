@@ -1,0 +1,7 @@
+<launch>
+  <!-- Load poses from YAML file to parameter server -->
+  <rosparam command="load" file="$(find point_to)/config/poses.yaml" />
+
+  <!-- Start the point_to action server node -->
+  <node name="point_to_node" pkg="point_to" type="point_to_node" output="screen" />
+</launch>
