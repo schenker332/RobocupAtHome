@@ -10,7 +10,7 @@ A service robot that autonomously manages guest arrivals in a home environment. 
 
 [![Demo Video](demo/demo_preview.png)](https://schenker332.github.io/RobocupAtHome/demo/demo.mp4)
 
-Click the image to play the demo video showing the robot welcoming guests, navigating, and managing seats.
+*Click the image to play the demo video showing the robot welcoming guests, navigating, and managing seats.*
 
 ## Setup & Build
 
